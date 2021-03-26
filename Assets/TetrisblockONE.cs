@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class TetrisblockONE : MonoBehaviour
 {
+     
 
 
     public Vector3 rotationPoint;
@@ -17,54 +20,54 @@ public class TetrisblockONE : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-
-
-    public bool CheckIsAboveGrid(SpawnerTetro spawnerTetro)
-    {
-        for(int j=0; j<width; j++)
-        {
-            foreach(Transform children in spawnerTetro.transform)
-            {
-                Vector3 pos = RoundToInt(children.position);
-                if(pos.y> height -1)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
 
 
     
+    
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        if (!ValidMove())
+        {
+
+            Debug.Log("Game Over");
+            
+
+            Destroy(gameObject);
+            
+        }
+
+    }
+
+
+
+
+
+
+
+
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow))              // for horizontal left and right movement 
         {
             transform.position += new Vector3(-1, 0, 0);
-            if(!ValidMove())
+            if (!ValidMove())
                 transform.position -= new Vector3(-1, 0, 0);
         }
-       else if (Input.GetKeyDown(KeyCode.RightArrow))
-       {
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
             transform.position += new Vector3(1, 0, 0);       // for horizontal left and right movement
             if (!ValidMove())
                 transform.position -= new Vector3(1, 0, 0);
-       }
+        }
 
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), 90);
-            if(!ValidMove())
+            if (!ValidMove())
                 transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
         }
 
@@ -85,18 +88,24 @@ public class TetrisblockONE : MonoBehaviour
                 CheckForLines();
                 this.enabled = false;
                 FindObjectOfType<SpawnerTetro>().NewTetromino();
-
+               
 
             }
             previousTime = Time.time;
 
         }
 
+
+
+
+
+        
+
     }
 
     void CheckForLines()
     {
-        for(int i=height-1; i>=0; i--)
+        for (int i = height - 1; i >= 0; i--)
         {
             if (HasLine(i))
             {
@@ -107,7 +116,7 @@ public class TetrisblockONE : MonoBehaviour
     }
     bool HasLine(int i)
     {
-        for(int j=0; j< width; j++)
+        for (int j = 0; j < width; j++)
         {
             if (grid[j, i] == null)
                 return false;
@@ -117,7 +126,7 @@ public class TetrisblockONE : MonoBehaviour
 
     void DeleteLine(int i)
     {
-        for(int j=0; j<width; j++)
+        for (int j = 0; j < width; j++)
         {
             Destroy(grid[j, i].gameObject);
             grid[j, i] = null;
@@ -126,11 +135,11 @@ public class TetrisblockONE : MonoBehaviour
 
     void RowDown(int i)
     {
-        for(int y=i; y< height; y++)
+        for (int y = i; y < height; y++)
         {
-            for(int j=0; j< width; j++)
+            for (int j = 0; j < width; j++)
             {
-                if(grid[j,y] != null)
+                if (grid[j, y] != null)
                 {
                     grid[j, y - 1] = grid[j, y];
                     grid[j, y] = null;
@@ -148,7 +157,7 @@ public class TetrisblockONE : MonoBehaviour
     {
         foreach (Transform children in transform)
         {
-            int roundedX = Mathf.RoundToInt(children.transform.position.x);   
+            int roundedX = Mathf.RoundToInt(children.transform.position.x);
             int roundedY = Mathf.RoundToInt(children.transform.position.y);
 
             grid[roundedX, roundedY] = children;
@@ -159,12 +168,12 @@ public class TetrisblockONE : MonoBehaviour
 
     bool ValidMove()
     {
-        foreach(Transform children in transform)     // browsw all the childern of tetrominos(4)
+        foreach (Transform children in transform)     // browsw all the childern of tetrominos(4)
         {
             int roundedX = Mathf.RoundToInt(children.transform.position.x);   // check the position of x and y tetromino and theor childern(1)
             int roundedY = Mathf.RoundToInt(children.transform.position.y);
 
-            if(roundedX <0 || roundedX >= width || roundedY < 0 || roundedY >= height )  //if one is bigger than size of grid (2)
+            if (roundedX < 0 || roundedX >= width || roundedY < 0 || roundedY >= height)  //if one is bigger than size of grid (2)
             {
                 return false;       /// return false(3)
             }
@@ -177,6 +186,11 @@ public class TetrisblockONE : MonoBehaviour
         return true;    // return true(5) if none is bigger than size of grid
     }
 
+    
+        
+
+
+         
 
 
 }
